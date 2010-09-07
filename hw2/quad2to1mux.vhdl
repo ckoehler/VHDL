@@ -12,7 +12,9 @@ architecture quad2to1mux_arch of quad2to1mux is
 
 begin
 
-  MOUT <= A when E = '1' else '0';
+  MOUT <= A when E = '1' and S = '0' else 
+          B when E = '1' and S = '1' else 
+          "0000";
 end quad2to1mux_arch;
 
 
