@@ -111,6 +111,70 @@ BEGIN
     --------- Place your stimulus code here --------------- 
 
     -- Deassert ENABLE and count 000-111 on C, B, A 
+    ENABLE <= '0';
+    A <= '0';
+    B <= '0';
+    C <= '0';
+    wait for 50 ns;
+    assert Y_N = "11111111"
+      report "Boo"
+      severity failure;
+
+    A <= '1';
+    B <= '0';
+    C <= '0';
+    wait for 50 ns;
+    assert Y_N = "11111111"
+      report "Boo"
+      severity failure;
+
+    A <= '0';
+    B <= '1';
+    C <= '0';
+    wait for 50 ns;
+    assert Y_N = "11111111"
+      report "Boo"
+      severity failure;
+
+    A <= '1';
+    B <= '1';
+    C <= '0';
+    wait for 50 ns;
+    assert Y_N = "11111111"
+      report "Boo"
+      severity failure;
+
+    A <= '0';
+    B <= '0';
+    C <= '1';
+    wait for 50 ns;
+    assert Y_N = "11111111"
+      report "Boo"
+      severity failure;
+
+    A <= '1';
+    B <= '0';
+    C <= '1';
+    wait for 50 ns;
+    assert Y_N = "11111111"
+      report "Boo"
+      severity failure;
+
+    A <= '0';
+    B <= '1';
+    C <= '1';
+    wait for 50 ns;
+    assert Y_N = "11111111"
+      report "Boo"
+      severity failure;
+
+    A <= '1';
+    B <= '1';
+    C <= '1';
+    wait for 50 ns;
+    assert Y_N = "11111111"
+      report "Boo"
+      severity failure;
 
     --------- Place your stimulus code here ---------------- 
 
