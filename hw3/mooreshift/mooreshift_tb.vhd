@@ -15,7 +15,7 @@ ARCHITECTURE behavior OF mooreshift_tb IS
   COMPONENT mooreshift
     PORT(
           CLK : IN  std_logic;
-          RESET : IN  std_logic;
+          RESETN : IN  std_logic;
           X : IN  std_logic;
           Z : OUT  std_logic
         );
@@ -24,7 +24,7 @@ ARCHITECTURE behavior OF mooreshift_tb IS
 
    --Inputs
   signal CLK : std_logic := '0';
-  signal RESET : std_logic := '0';
+  signal RESETN : std_logic := '0';
   signal X : std_logic := '0';
 
    --Outputs
@@ -38,7 +38,7 @@ BEGIN
    -- Instantiate the Unit Under Test (UUT)
   uut: mooreshift PORT MAP (
                            CLK => CLK,
-                           RESET => RESET,
+                           RESETN => RESETN,
                            X => X,
                            Z => Z
                          );
@@ -56,10 +56,10 @@ BEGIN
    -- Stimulus process
   stim_proc: process
   begin		
-    RESET <= '1';
+    RESETN <= '0';
     wait for 100 ns;
 
-    RESET <= '0';
+    RESETN <= '1';
     X <= '1';
     wait for 50 ns;
     assert(Z='0')
@@ -174,9 +174,9 @@ BEGIN
       report "output not right"
       severity failure;
 
-    RESET <= '1';
+    RESETN <= '0';
     wait for 50 ns;
-    RESET <= '0';
+    RESETN <= '1';
     wait for 50 ns;
 
     assert(false)
