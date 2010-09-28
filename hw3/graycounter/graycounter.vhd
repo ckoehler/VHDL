@@ -55,19 +55,15 @@ begin
       elsif(E='1') then
         if(UD='1') then
           if(counter="1111") then
-            COUT <= '1';
             counter <= "0000";
           else
             counter <= std_logic_vector(unsigned(counter) + 1);
             --counter <= counter + '1';
-            COUT <= '0';
           end if;
         else
           if(counter="0000") then
-            COUT <= '1';
             counter <= "1111";
           else
-            COUT <= '0';
             counter <= std_logic_vector(unsigned(counter) - 1);
             --counter <= counter - "0001";
           end if;
@@ -75,5 +71,8 @@ begin
       end if;
     end if;
   end process;
+  COUT <= '1' when counter="1111" and UD='1' else
+          '1' when counter="0000" and UD='0' else
+          '0';
 
 end graycounter_arch;
