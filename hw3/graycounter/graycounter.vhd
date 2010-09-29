@@ -16,7 +16,7 @@ entity graycounter is
 
     -- high if G="0000" and UD='1',
     -- low  if G="1000" and UD='0'
-        COUT: out std_logic;
+        COUT: out std_logic := '0';
         G: out std_logic_vector(3 downto 0)
       );
 end graycounter;
