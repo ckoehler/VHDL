@@ -7,7 +7,9 @@ entity mod4counter is
         CLK: in std_logic;
         SHIFT: in std_logic;
         CLRN: in std_logic;
+        LDN: in std_logic;
         Q: out std_logic_vector(1 downto 0)
+
       );
 
 end mod4counter;
@@ -22,7 +24,9 @@ begin
     if CLRN='0' then
       counter <= "11";
     elsif rising_edge(CLK) then
-      if SHIFT='1' then
+      if LDN='0' then
+        counter <= "11";
+      elsif SHIFT='1' then
         if counter="11" then
           counter <= "00";
         else

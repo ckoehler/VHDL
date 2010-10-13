@@ -14,7 +14,7 @@ entity grayto2of5 is
         SHIFT: in std_logic;
 
         -- serial input
-        A: in std_logic;
+        SERIAL_IN: in std_logic;
 
         -- load what's on P when this is asserted
         LDN: in std_logic;
@@ -23,10 +23,10 @@ entity grayto2of5 is
         CLK: in std_logic;
 
         -- indicates an error, invalid code
-        ERR: out std_logic;
+        ERROR2of5: out std_logic;
 
         -- the 5 bit output
-        Z: out std_logic_vector(4 downto 0)
+        D: out std_logic_vector(4 downto 0)
 
       );
 end grayto2of5;
@@ -53,6 +53,7 @@ architecture grayto2of5_arch of grayto2of5 is
           CLK: in std_logic;
           SHIFT: in std_logic;
           CLRN: in std_logic;
+          LDN: in std_logic;
           Q: out std_logic_vector(1 downto 0)
         );
   end component;
@@ -63,8 +64,8 @@ begin
   -- the converter
   the_converter: converter
   port map(
-          ERR => ERR,
-          Z => Z,
+          ERR => ERROR2of5,
+          Z => D,
           A => latches,
           E => output_latches
           );
@@ -74,6 +75,7 @@ begin
             CLK => CLK,
             SHIFT => SHIFT,
             CLRN => CLRN,
+            LDN => LDN,
             Q => count
           );
 
@@ -85,7 +87,7 @@ begin
       if LDN='0' then
         latches <= P;
       elsif SHIFT='1' then
-        latches <= latches(2 downto 0) & A;
+        latches <= latches(2 downto 0) & SERIAL_IN;
       end if;
     end if;
   end process;

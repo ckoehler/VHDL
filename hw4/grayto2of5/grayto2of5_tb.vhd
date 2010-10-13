@@ -17,11 +17,11 @@ ARCHITECTURE behavior OF grayto2of5_tb IS
          CLRN : IN  std_logic;
          P : IN  std_logic_vector(3 downto 0);
          SHIFT : IN  std_logic;
-         A : IN  std_logic;
+         SERIAL_IN : IN  std_logic;
          LDN : IN  std_logic;
          CLK : IN  std_logic;
-         ERR : OUT  std_logic;
-         Z : OUT  std_logic_vector(4 downto 0)
+         ERROR2of5 : OUT  std_logic;
+         D : OUT  std_logic_vector(4 downto 0)
         );
     END COMPONENT;
     
@@ -30,13 +30,13 @@ ARCHITECTURE behavior OF grayto2of5_tb IS
    signal CLRN : std_logic := '0';
    signal P : std_logic_vector(3 downto 0) := (others => '0');
    signal SHIFT : std_logic := '0';
-   signal A : std_logic := '0';
+   signal SERIAL_IN : std_logic := '0';
    signal LDN : std_logic := '0';
    signal CLK : std_logic := '0';
 
  	--Outputs
-   signal ERR : std_logic;
-   signal Z : std_logic_vector(4 downto 0);
+   signal ERROR2of5 : std_logic;
+   signal D : std_logic_vector(4 downto 0);
 
    -- Clock period definitions
    constant CLK_period : time := 50 ns;
@@ -48,11 +48,11 @@ BEGIN
           CLRN => CLRN,
           P => P,
           SHIFT => SHIFT,
-          A => A,
+          SERIAL_IN => SERIAL_IN,
           LDN => LDN,
           CLK => CLK,
-          ERR => ERR,
-          Z => Z
+          ERROR2of5 => ERROR2of5,
+          D => D
         );
 
    -- Clock process definitions
@@ -85,97 +85,97 @@ BEGIN
 
       --P <= "0000";
       --wait for 50 ns;
-      --assert Z="00011"
+      --assert D="00011"
       --report "wrong value"
       --severity failure;
 
       --P <= "0001";
       --wait for 50 ns;
-      --assert Z="00110"
+      --assert D="00110"
       --report "wrong value"
       --severity failure;
 
       --P <= "0011";
       --wait for 50 ns;
-      --assert Z="00101"
+      --assert D="00101"
       --report "wrong value"
       --severity failure;
 
       --P <= "0010";
       --wait for 50 ns;
-      --assert Z="01001"
+      --assert D="01001"
       --report "wrong value"
       --severity failure;
 
       --P <= "0110";
       --wait for 50 ns;
-      --assert Z="01010"
+      --assert D="01010"
       --report "wrong value"
       --severity failure;
 
       --P <= "0100";
       --wait for 50 ns;
-      --assert Z="01100"
+      --assert D="01100"
       --report "wrong value"
       --severity failure;
 
       --P <= "0101";
       --wait for 50 ns;
-      --assert Z="10001"
+      --assert D="10001"
       --report "wrong value"
       --severity failure;
 
       --P <= "0111";
       --wait for 50 ns;
-      --assert Z="10010"
+      --assert D="10010"
       --report "wrong value"
       --severity failure;
 
       --P <= "1111";
       --wait for 50 ns;
-      --assert Z="10100"
+      --assert D="10100"
       --report "wrong value"
       --severity failure;
 
       --P <= "1110";
       --wait for 50 ns;
-      --assert Z="11000"
+      --assert D="11000"
       --report "wrong value"
       --severity failure;
 
       --P <= "1100";
       --wait for 50 ns;
-      --assert Z="11111"
+      --assert D="11111"
       --report "wrong value"
       --severity failure;
 
       --P <= "1101";
       --wait for 50 ns;
-      --assert Z="11111"
+      --assert D="11111"
       --report "wrong value"
       --severity failure;
 
       --P <= "1001";
       --wait for 50 ns;
-      --assert Z="11111"
+      --assert D="11111"
       --report "wrong value"
       --severity failure;
 
       --P <= "1011";
       --wait for 50 ns;
-      --assert Z="11111"
+      --assert D="11111"
       --report "wrong value"
       --severity failure;
 
       --P <= "1010";
       --wait for 50 ns;
-      --assert Z="11111"
+      --assert D="11111"
       --report "wrong value"
       --severity failure;
 
       --P <= "1000";
       --wait for 50 ns;
-      --assert Z="11111"
+      --assert D="11111"
       --report "wrong value"
       --severity failure;
 
@@ -190,14 +190,14 @@ BEGIN
       wait for 50 ns;
       CLRN <= '1';
 
-      assert Z <= "00011"
+      assert D="00011"
       report "wrong value"
       severity failure;
 
       SHIFT <= '0';
       wait for 50 ns;
       SHIFT <= '1';
-      A <= '1';
+      SERIAL_IN <= '1';
       wait for 200 ns;
 
       SHIFT <= '0';
@@ -210,10 +210,10 @@ BEGIN
       LDN <= '1';
       SHIFT <= '1';
 
-      A <= '0';
+      SERIAL_IN <= '0';
       wait for 200 ns;
 
-      A <= '1';
+      SERIAL_IN <= '1';
       wait for 300 ns;
 
 
