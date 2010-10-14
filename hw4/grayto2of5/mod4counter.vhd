@@ -8,29 +8,28 @@ entity mod4counter is
         SHIFT: in std_logic;
         CLRN: in std_logic;
         LDN: in std_logic;
-        Q: out std_logic_vector(1 downto 0)
-
+        Q: out integer range 0 to 3
       );
 
 end mod4counter;
 
 architecture mod4counter_arch of mod4counter is
 
-  signal counter: std_logic_vector(1 downto 0);
+  signal counter: integer range 0 to 3;
 
 begin
-  process(CLK)
+  process(CLK, CLRN)
   begin
     if CLRN='0' then
-      counter <= "11";
+      counter <= 3;
     elsif rising_edge(CLK) then
       if LDN='0' then
-        counter <= "11";
+        counter <= 3;
       elsif SHIFT='1' then
-        if counter="11" then
-          counter <= "00";
+        if counter=3 then
+          counter <= 0;
         else
-          counter <= std_logic_vector(unsigned(counter) + 1);      
+          counter <= counter + 1;
         end if;
       end if;
     end if;

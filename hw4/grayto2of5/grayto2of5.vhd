@@ -35,28 +35,26 @@ end grayto2of5;
 architecture grayto2of5_arch of grayto2of5 is
 
   signal latches: std_logic_vector(3 downto 0);
-  signal count: std_logic_vector(1 downto 0);
-  signal output_latches: std_logic;
+  signal shift_register: std_logic_vector(3 downto 0);
+  signal counter: integer range 0 to 3;
 
   component converter
     port(
           A: in std_logic_vector(3 downto 0);
-          ERR: out std_logic;
-          Z: out std_logic_vector(4 downto 0);
-          E: in std_logic
+          Z: out std_logic_vector(4 downto 0)
         );
   end component;
 
 
-  component mod4counter
-    port(
-          CLK: in std_logic;
-          SHIFT: in std_logic;
-          CLRN: in std_logic;
-          LDN: in std_logic;
-          Q: out std_logic_vector(1 downto 0)
-        );
-  end component;
+  --component mod4counter
+    --port(
+          --CLK: in std_logic;
+          --SHIFT: in std_logic;
+          --CLRN: in std_logic;
+          --LDN: in std_logic;
+          --Q: out integer range 0 to 3
+        --);
+  --end component;
 
 
 begin
@@ -64,36 +62,61 @@ begin
   -- the converter
   the_converter: converter
   port map(
-          ERR => ERROR2of5,
           Z => D,
-          A => latches,
-          E => output_latches
+          A => latches
           );
 
-  counter: mod4counter
-  port map(
-            CLK => CLK,
-            SHIFT => SHIFT,
-            CLRN => CLRN,
-            LDN => LDN,
-            Q => count
-          );
+  --counter: mod4counter
+  --port map(
+            --CLK => CLK,
+            --SHIFT => SHIFT,
+            --CLRN => CLRN,
+            --LDN => LDN,
+            --Q => count
+          --);
 
-  process(CLK)
+  process(CLK, CLRN)
   begin
     if CLRN='0' then
-      latches <= "0000";
+      shift_register <= "0000";
     elsif rising_edge(CLK) then
       if LDN='0' then
-        latches <= P;
+        shift_register <= P;
       elsif SHIFT='1' then
-        latches <= latches(2 downto 0) & SERIAL_IN;
+        shift_register <= shift_register(2 downto 0) & SERIAL_IN;
       end if;
     end if;
   end process;
 
-  output_latches <= '1' when count="11" else
-                    '0';
+  ERROR2of5 <= '1' when latches="1000" or latches="1001" or latches="1010" or latches="1011" or latches="1100" or latches="1101" else
+               '0';
+
+
+  process(counter, shift_register)
+  begin
+    if counter=3 then
+      latches <= shift_register;
+    end if;
+  end process;
+
+
+  process(CLK, CLRN)
+  begin
+    if CLRN='0' then
+      counter <= 3;
+    elsif rising_edge(CLK) then
+      if LDN='0' then
+        counter <= 3;
+      elsif SHIFT='1' then
+        if counter=3 then
+          counter <= 0;
+        else
+          counter <= counter + 1;
+        end if;
+      end if;
+    end if;
+  end process;
+
 
 end grayto2of5_arch;
 
