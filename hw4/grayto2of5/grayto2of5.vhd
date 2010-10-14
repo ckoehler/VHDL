@@ -46,17 +46,6 @@ architecture grayto2of5_arch of grayto2of5 is
   end component;
 
 
-  --component mod4counter
-    --port(
-          --CLK: in std_logic;
-          --SHIFT: in std_logic;
-          --CLRN: in std_logic;
-          --LDN: in std_logic;
-          --Q: out integer range 0 to 3
-        --);
-  --end component;
-
-
 begin
 
   -- the converter
@@ -66,15 +55,8 @@ begin
           A => latches
           );
 
-  --counter: mod4counter
-  --port map(
-            --CLK => CLK,
-            --SHIFT => SHIFT,
-            --CLRN => CLRN,
-            --LDN => LDN,
-            --Q => count
-          --);
 
+  -- shift register process
   process(CLK, CLRN)
   begin
     if CLRN='0' then
@@ -88,10 +70,11 @@ begin
     end if;
   end process;
 
+  -- error handling
   ERROR2of5 <= '1' when latches="1000" or latches="1001" or latches="1010" or latches="1011" or latches="1100" or latches="1101" else
                '0';
 
-
+  -- SR to latches logic process 
   process(counter, shift_register)
   begin
     if counter=3 then
@@ -99,7 +82,7 @@ begin
     end if;
   end process;
 
-
+  -- counter process
   process(CLK, CLRN)
   begin
     if CLRN='0' then
