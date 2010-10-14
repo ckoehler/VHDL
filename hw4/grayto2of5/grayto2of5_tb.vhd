@@ -201,16 +201,16 @@ BEGIN
       wait for 200 ns;
 
       SHIFT <= '0';
-      wait for 50 ns;
       
+      wait for 50 ns;
+      SHIFT <= '1';
       LDN <= '0';
       P <= "1110";
-      
+      SERIAL_IN <= '0';
+
       wait for 50 ns;
       LDN <= '1';
-      SHIFT <= '1';
 
-      SERIAL_IN <= '0';
       wait for 200 ns;
 
       SERIAL_IN <= '1';
