@@ -31,7 +31,7 @@ begin
     end if;
   end process;
 
-  ZBUS <= R(D) when TEN='1' and XLD='0' else
+  ZBUS <= R(S) when TEN='1' and XLD='0' else
           MemBUS when MEMIO='1' and XLD='1' else
           IOBUS when MEMIO='0' and XLD='1' else
           HiZ;
