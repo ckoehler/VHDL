@@ -14,7 +14,7 @@ entity alu is
         IBUS: inout std_logic_vector(RegSize-1 downto 0);
         CIN: in std_logic;
         
-        Status: out std_logic_vector(3 downto 0)
+        Status: out std_logic_vector(3 downto 0) := "0000"
 );
 
 end alu;
@@ -40,10 +40,9 @@ architecture alu_arch of alu is
   constant subt  : std_logic_vector(4 downto 0) :="00010";
   constant inca  : std_logic_vector(4 downto 0) :="00011";
   constant addc  : std_logic_vector(4 downto 0) :="00100";
-  -- ignore c, carry != carry
   constant subtc : std_logic_vector(4 downto 0) :="00101";
-  constant deca  : std_logic_vector(4 downto 0) :="00110";
-  constant nega  : std_logic_vector(4 downto 0) :="00111";
+  constant nega  : std_logic_vector(4 downto 0) :="00110";
+  constant deca  : std_logic_vector(4 downto 0) :="00111";
   constant nota  : std_logic_vector(4 downto 0) :="01000";
   constant anda  : std_logic_vector(4 downto 0) :="01001";
   constant ora   : std_logic_vector(4 downto 0) :="01010";
@@ -88,7 +87,7 @@ begin
         adder(A,not B, CIN, result, CO);
 
       when deca => 
-        adder(A,"11111111",'0', result, CO);
+        adder(A,not "00000001",'1', result, CO);
 
       when nega => 
         adder(not A, "00000000", '1', result, CO);
