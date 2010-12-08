@@ -11,10 +11,10 @@ entity buscontroller is
   A           : in std_logic_vector(15 downto 8);
   AS          : in std_logic;
   RW          : in std_logic;
+  INPORT0     : in std_logic_vector(7 downto 0);
   INPORT1     : in std_logic_vector(7 downto 0);
   INPORT2     : in std_logic_vector(7 downto 0);
   INPORT3     : in std_logic_vector(7 downto 0);
-  INPORT4     : in std_logic_vector(7 downto 0);
 
   AD          : inout std_logic_vector(7 downto 0);
   DOUT        : inout std_logic_vector(7 downto 0);
@@ -26,10 +26,10 @@ entity buscontroller is
   WE          : out std_logic;
   OE          : out std_logic;
   AOUT        : out std_logic_vector(15 downto 0);
+  OUTPORT0    : out std_logic_vector(7 downto 0);
   OUTPORT1    : out std_logic_vector(7 downto 0);
   OUTPORT2    : out std_logic_vector(7 downto 0);
-  OUTPORT3    : out std_logic_vector(7 downto 0);
-  OUTPORT4    : out std_logic_vector(7 downto 0)
+  OUTPORT3    : out std_logic_vector(7 downto 0)
 );
 
 end buscontroller;
@@ -40,12 +40,15 @@ architecture bus_arch of buscontroller is
   type multiport_t is array(0 to 3) of std_logic_vector(7 downto 0);
 
   signal CS: std_logic_vector(15 downto 0);
+  signal latchedAD: std_logic_vector(7 downto 0);
   signal CSIN: std_logic_vector(3 downto 0);
   signal CSEN: std_logic;
+  signal INEN: std_logic;
   signal ECLKBuf: std_logic;  -- ECLK from Input Buffer
   signal ECLKDelayBuf: std_logic;  -- ECLK from Input Buffer
   signal ECLKDelay: std_logic; -- local delayed ECLK
   signal DCMCLK8: std_logic;  -- CLK8 from DCM
+  signal CLK4: std_logic;  -- CLK4
 begin
 
   -- DCM_SP: Digital Clock Manager Circuit
@@ -160,28 +163,56 @@ begin
 
   -- End of DCM_SP_inst instantiation
 
-  as_latching: process(AS)
+  latchedAD <= AD when AS='1';
+  AOUT(7 downto 0) <= latchedAD;
+
+  -- if RW='0' and CS(12) = '0'
+  outport_tx: process(ECLK)
   begin
-    if(AS='1') then
-      AOUT(7 downto 0) <= AD;
+    if falling_edge(ECLK) then
+      if RW='0' then
+        if CS(12)='0' then
+          if latchedAD=x"00" then
+            OUTPORT0 <= AD;
+          elsif latchedAD=x"01" then
+            OUTPORT1 <= AD;
+          elsif latchedAD=x"02" then
+            OUTPORT2 <= AD;
+          elsif latchedAD=x"03" then
+            OUTPORT3 <= AD;
+          end if;
+        end if;
+      end if;
     end if;
   end process;
 
-  -- if RW='0' and CS(12) = '0'
-  outport_latching: process(ECLK)
+  clk4_process: process(ECLK,DCMCLK8)
   begin
-    if falling_edge(ECLK) then
-      if RW='0' and CS(12)='0' then
-        OUTPORT1 <= AD(7 downto 0);
-      elsif RW='1' and CS(12)='0' then
-        AD(7 downto 0) <= INPORT1; 
-      end if;
+    -- align this clock with ECLK
+    if rising_edge(ECLK) then
+      CLK4 <= '1';
+    end if;
+
+    if rising_edge(DCMCLK8) then
+      CLK4 <= not CLK4;
     end if;
   end process;
 
 
   AOUT(15 downto 8) <= A;
-  DOUT <= AD when ECLKDelay='0';
+  AOUT(7 downto 0) <= latchedAD;
+  DOUT <= AD when CSEN='1' else
+          "ZZZZZZZZ";
+
+  INEN <= '1' when (ECLKDelay='1' and CLK4='1') or (ECLK='0' and ECLKDelay='1' and CLK4='0' and DCMCLK8='1') else
+          '0';
+
+
+  AD <= INPORT0 when RW='1' and latchedAD=x"00" and CS(12)='0' and INEN='1' else
+        INPORT1 when RW='1' and latchedAD=x"01" and CS(12)='0' and INEN='1' else
+        INPORT2 when RW='1' and latchedAD=x"02" and CS(12)='0' and INEN='1' else
+        INPORT3 when RW='1' and latchedAD=x"03" and CS(12)='0' and INEN='1' else
+        "ZZZZZZZZ";
 
   CSEN <= ECLK or ECLKDelay;
   CSIN <= A(15 downto 12);
